@@ -1,0 +1,27 @@
+<div class="admin-container">
+  <header>
+    <h1>Painel da ONG ⚙️</h1>
+    <button (click)="goHome()" class="btn-view">Ver Chatbot</button>
+  </header>
+
+  <div class="editor-area">
+    <div *ngFor="let key of objectKeys(flow)" class="card-edit">
+      <h3>Editando passo: <span>{{ key }}</span></h3>
+      
+      <label>Mensagem do Robô:</label>
+      <textarea [(ngModel)]="flow[key].text" rows="3"></textarea>
+      
+      <div class="options-preview">
+        <p><small>Botões atuais (apenas visualização):</small></p>
+        <span *ngFor="let opt of flow[key].options" class="tag">
+          {{ opt.label }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-bar">
+    <button (click)="reset()" class="btn-danger">Resetar Padrão</button>
+    <button (click)="save()" class="btn-success">💾 Salvar Alterações</button>
+  </div>
+</div>

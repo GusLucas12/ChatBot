@@ -1,0 +1,37 @@
+<div class="chat-container">
+
+    <div class="chat-header">
+        <div class="header-icon">
+            ONG
+        </div>
+        <div class="header-info">
+            <h3>Atendimento LoveToCare</h3>
+    
+        </div>
+    </div>
+
+    <div class="chat-body" #scrollMe>
+        <div *ngFor="let msg of messages" class="message-wrapper"
+            [ngClass]="{'my-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
+
+            <div class="message-bubble">
+                {{ msg.text }}
+            </div>
+
+            <div class="options-container"
+                *ngIf="msg.sender === 'bot' && msg.options && msg === messages[messages.length - 1]">
+                <button *ngFor="let opt of msg.options" class="option-btn" (click)="handleOption(opt)">
+                    {{ opt.label }}
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <input type="text" [(ngModel)]="userInput" (keydown.enter)="sendMessage()"
+            placeholder="Digite uma mensagem..." />
+        <button (click)="sendMessage()">➤</button>
+    </div>
+
+</div>

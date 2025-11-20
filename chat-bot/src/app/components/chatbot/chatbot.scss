@@ -1,0 +1,203 @@
+/* Variáveis de Cor (fácil de trocar depois) */
+$primary-color: #4a90e2; /* Azul Institucional */
+$primary-gradient: linear-gradient(135deg, #4a90e2 0%, #0056b3 100%);
+$bg-color: #f4f7f6; /* Cinza azulado muito suave */
+$bot-bubble-color: #ffffff;
+$user-bubble-color: #4a90e2;
+$text-color: #333;
+
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background-color: $bg-color;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 900px; /* Um pouco mais largo */
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 40px rgba(0,0,0,0.05); /* Sombra bem suave nas laterais */
+  position: relative;
+}
+
+/* --- Header Moderno --- */
+.chat-header {
+  background: white; /* Fundo branco limpo */
+  color: $text-color;
+  padding: 20px 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #eaeaea;
+  
+  /* Ícone da ONG */
+  .header-icon {
+    width: 45px;
+    height: 45px;
+    background: $primary-gradient;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+  }
+}
+
+.header-info h3 { 
+  margin: 0; 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: #2c3e50;
+}
+.header-info p { 
+  margin: 0; 
+  font-size: 13px; 
+  color: #7f8c8d; 
+  font-weight: 500;
+}
+
+/* --- Corpo do Chat --- */
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  background-color: $bg-color; /* Fundo sólido limpo */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  
+  /* Barra de rolagem estilizada */
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.1); border-radius: 10px; }
+}
+
+/* --- Mensagens --- */
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+  animation: fadeUp 0.3s ease forwards;
+}
+
+.bot-message { 
+  align-self: flex-start; 
+}
+
+.my-message { 
+  align-self: flex-end; 
+  align-items: flex-end; 
+}
+
+.message-bubble {
+  padding: 14px 20px;
+  border-radius: 18px; /* Borda bem redonda */
+  font-size: 15px;
+  line-height: 1.5;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Sombra sutil para profundidade */
+}
+
+/* Estilo do Bot (Branco Clean) */
+.bot-message .message-bubble {
+  background-color: $bot-bubble-color;
+  color: #444;
+  border-bottom-left-radius: 4px; /* Pequeno detalhe de design */
+  border: 1px solid #f0f0f0;
+}
+
+/* Estilo do Usuário (Azul Moderno) */
+.my-message .message-bubble {
+  background: $primary-gradient; /* Gradiente bonito */
+  color: white;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+/* --- Botões de Opção --- */
+.options-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.option-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #555;
+  padding: 10px 20px;
+  border-radius: 30px; /* Botão pílula */
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.option-btn:hover {
+  background: $primary-color;
+  border-color: $primary-color;
+  color: white;
+  transform: translateY(-2px); /* Leve subida ao passar o mouse */
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.25);
+}
+
+/* --- Rodapé (Input) --- */
+.chat-footer {
+  padding: 20px 30px;
+  background: white;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.chat-footer input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid #f0f0f0;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  outline: none;
+  font-size: 15px;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.chat-footer input:focus {
+  border-color: $primary-color;
+  background-color: white;
+}
+
+.chat-footer button {
+  background: $primary-gradient;
+  color: white;
+  border: none;
+  border-radius: 12px; /* Quadrado arredondado */
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+}
+
+.chat-footer button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
