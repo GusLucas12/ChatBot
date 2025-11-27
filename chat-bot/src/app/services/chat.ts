@@ -1,12 +1,15 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ChatFlow } from '../modules/chat.models'; // Ajuste o caminho se necessário
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private storageKey = 'ong_chat_flow';
+  private apiUrl = 'https://script.google.com/macros/s/AKfycbzD5ft5Fd3gtyL7PcD9lOW0kpmubLdS9TqEv1N1maIjcna7_NHnVxJD_qiO2FPoMI3U/exec';
 
   // O fluxo padrão inicial
   private defaultFlow: ChatFlow = {
@@ -55,26 +58,25 @@ export class ChatService {
   };
 
   // Injetamos o ID da plataforma para saber se estamos no Servidor ou Navegador
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private http: HttpClient) { }
 
   // Pega o fluxo
-  getFlow(): ChatFlow {
-    // VERIFICAÇÃO IMPORTANTE: Só roda se for navegador
-    if (isPlatformBrowser(this.platformId)) {
-      const saved = localStorage.getItem(this.storageKey);
-      return saved ? JSON.parse(saved) : this.defaultFlow;
-    }
-    // Se estiver no servidor, retorna o padrão para não dar erro
-    return this.defaultFlow;
+  getFlow(): Observable<ChatFlow> {
+    // Adiciona o param action=getFlow
+    return this.http.get<ChatFlow>(`${this.apiUrl}?action=getFlow`);
   }
 
-  // Salva as alterações
-  saveFlow(newFlow: ChatFlow) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.storageKey, JSON.stringify(newFlow));
-    }
-  }
+ saveFlow(newFlow: ChatFlow): Observable<any> {
+  // O TRUQUE: 'text/plain' evita que o navegador faça a pergunta de segurança que o Google bloqueia
+  const headers = new HttpHeaders({ 'Content-Type': 'text/plain' });
   
+  // Enviamos o objeto transformado em string manualmente
+  return this.http.post(
+    `${this.apiUrl}?action=saveFlow`, 
+    JSON.stringify(newFlow), 
+    { headers }
+  );
+}
   // Reseta para o padrão
   resetFactory() {
     if (isPlatformBrowser(this.platformId)) {

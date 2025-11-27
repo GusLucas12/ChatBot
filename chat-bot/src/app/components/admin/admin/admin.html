@@ -1,27 +1,87 @@
 <div class="admin-container">
   <header>
-    <h1>Painel da ONG ⚙️</h1>
-    <button (click)="goHome()" class="btn-view">Ver Chatbot</button>
+    <div class="header-content">
+      <h1>Painel Love to Care ❤️</h1>
+      <p>Gestão Centralizada</p>
+    </div>
+    <button (click)="goHome()" class="btn-outline">Sair</button>
   </header>
 
-  <div class="editor-area">
-    <div *ngFor="let key of objectKeys(flow)" class="card-edit">
-      <h3>Editando passo: <span>{{ key }}</span></h3>
-      
-      <label>Mensagem do Robô:</label>
-      <textarea [(ngModel)]="flow[key].text" rows="3"></textarea>
-      
-      <div class="options-preview">
-        <p><small>Botões atuais (apenas visualização):</small></p>
-        <span *ngFor="let opt of flow[key].options" class="tag">
-          {{ opt.label }}
-        </span>
+  <div class="tabs">
+    <button (click)="activeTab = 'dashboard'" [class.active]="activeTab === 'dashboard'">📊 Métricas</button>
+    <button (click)="activeTab = 'editor'" [class.active]="activeTab === 'editor'">✏️ Editar Robô</button>
+  </div>
+
+  <div *ngIf="activeTab === 'dashboard'" class="dashboard-area">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Interações Totais</h3>
+        <p class="big-number">{{ totalInteractions }}</p>
+      </div>
+      <div class="stat-card highlight">
+        <h3>Assunto Mais Procurado</h3>
+        <p class="big-number">{{ topInterests[0]?.name || '---' }}</p>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <h3>Ranking de Dúvidas Frequentes</h3>
+      <ul class="ranking-list">
+        <li *ngFor="let item of topInterests; let i = index">
+          <span class="rank">#{{ i + 1 }}</span>
+          <span class="label">{{ item.name }}</span>
+          <div class="bar-container">
+            <div class="bar" [style.width.%]="(item.value / totalInteractions) * 100"></div>
+          </div>
+          <span class="value">{{ item.value }} cliques</span>
+        </li>
+      </ul>
+      <p class="insight-text" *ngIf="topInterests.length === 0">
+        Nenhum dado coletado ainda. Use o chatbot para gerar métricas.
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'editor'" class="editor-area">
+    <div *ngIf="activeTab === 'editor'" class="editor-area">
+
+      <div class="toolbar">
+        <button class="btn-add" (click)="addCard()">+ Novo Passo</button>
+        <button class="btn-save" (click)="save()" [disabled]="isLoading">
+          {{ isLoading ? 'Salvando...' : '💾 Salvar Alterações' }}
+        </button>
+      </div>
+
+      <div class="cards-grid">
+        <div *ngFor="let card of cards; let i = index" class="edit-card">
+
+          <div class="card-header">
+            <span class="card-id">ID: <strong>{{ card.id }}</strong></span>
+            <button class="btn-remove-sm" (click)="removeCard(i)" *ngIf="card.id !== 'start'">🗑️</button>
+          </div>
+
+          <div class="card-body">
+            <label>Mensagem do Robô:</label>
+            <textarea [(ngModel)]="card.text" rows="3"></textarea>
+
+            <label>Botões de Resposta:</label>
+            <div class="options-list">
+              <div *ngFor="let opt of card.options; let j = index" class="option-row">
+                <input type="text" [(ngModel)]="opt.label" placeholder="Texto do Botão" class="input-sm">
+
+                <input type="text" [(ngModel)]="opt.nextStep" placeholder="Destino (ID ou Link http...)"
+                  class="input-sm">
+
+                <button (click)="removeOption(card, j)" class="btn-x">×</button>
+              </div>
+              <button (click)="addOption(card)" class="btn-add-opt">+ Botão</button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="actions-bar">
-    <button (click)="reset()" class="btn-danger">Resetar Padrão</button>
-    <button (click)="save()" class="btn-success">💾 Salvar Alterações</button>
-  </div>
 </div>
