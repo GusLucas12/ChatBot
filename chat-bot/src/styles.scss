@@ -1,10 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
-/* src/styles.scss ou src/styles.css */
+/* 1. Importar Estilos do PrimeNG (Tema Aura ou Saga) e Ícones */
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+/* Fonte */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+:root {
+  /* --- PALETA NOVA --- */
+  --ong-primary: #DA577C;       /* Rosa para confirmação/destaque */
+  --ong-secondary: #E6DCDC;     /* Bege para botões secundários */
+  --bg-page: #F2EDE4;           /* Fundo da página creme */
+  --text-main: #4a4a4a;         /* Texto escuro para contraste */
+}
+
+body, html {
+  margin: 0; padding: 0;
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--bg-page); /* Fundo #F2EDE4 aplicado */
+  color: var(--text-main);
   height: 100%;
-  box-sizing: border-box; /* Garante que padding não estoure o tamanho */
+}
+
+/* --- SOBRESCRITA DOS BOTÕES PRIMENG --- */
+
+/* Botão Primário (Salvar, Adicionar) - #DA577C */
+.p-button.btn-ong-primary {
+  background: var(--ong-primary);
+  border: 1px solid var(--ong-primary);
+  color: white;
+  border-radius: 8px; /* Arredondado suave */
+  font-weight: 700;
+}
+.p-button.btn-ong-primary:enabled:hover {
+  background: #c04566; /* Um pouco mais escuro no hover */
+  border-color: #c04566;
+}
+
+/* Botão Secundário (Cancelar, Voltar, Opções) - #E6DCDC */
+.p-button.btn-ong-secondary {
+  background: var(--ong-secondary);
+  border: 1px solid #dcd6d6;
+  color: #555; /* Texto escuro pois o fundo é claro */
+  border-radius: 8px;
+  font-weight: 600;
+}
+.p-button.btn-ong-secondary:enabled:hover {
+  background: #d4caca;
+  color: #333;
+  border-color: #bbb;
+}
+
+/* Botão de Perigo (Lixeira) - Mantendo vermelho mas suave */
+.p-button.btn-trash {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  color: #e74c3c;
+}
+.p-button.btn-trash:enabled:hover {
+  background: #ffcccc;
+  color: #c0392b;
+  border-color: #c0392b;
 }

@@ -1,87 +1,148 @@
-<div class="admin-container">
-  <header>
-    <div class="header-content">
-      <h1>Painel Love to Care ❤️</h1>
-      <p>Gestão Centralizada</p>
+<div class="admin-layout">
+  
+  <!-- SIDEBAR (Menu Lateral) -->
+  <aside class="sidebar" [class.open]="isMobileMenuOpen">
+    <div class="brand">
+      <h2>Love<span>Care</span></h2>
+      <p>Painel Administrativo</p>
     </div>
-    <button (click)="goHome()" class="btn-outline">Sair</button>
-  </header>
+    
+    <nav class="nav-menu">
+      <button (click)="activeTab = 'dashboard'; isMobileMenuOpen=false" 
+              class="nav-btn" 
+              [class.active]="activeTab === 'dashboard'">
+        <span class="icon">📊</span> Dashboard
+      </button>
+      <button (click)="activeTab = 'editor'; isMobileMenuOpen=false" 
+              class="nav-btn" 
+              [class.active]="activeTab === 'editor'">
+        <span class="icon">✏️</span> Editar Fluxo
+      </button>
+    </nav>
 
-  <div class="tabs">
-    <button (click)="activeTab = 'dashboard'" [class.active]="activeTab === 'dashboard'">📊 Métricas</button>
-    <button (click)="activeTab = 'editor'" [class.active]="activeTab === 'editor'">✏️ Editar Robô</button>
-  </div>
-
-  <div *ngIf="activeTab === 'dashboard'" class="dashboard-area">
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Interações Totais</h3>
-        <p class="big-number">{{ totalInteractions }}</p>
-      </div>
-      <div class="stat-card highlight">
-        <h3>Assunto Mais Procurado</h3>
-        <p class="big-number">{{ topInterests[0]?.name || '---' }}</p>
-      </div>
+    <div class="sidebar-footer">
+      <button (click)="goHome()" class="btn-secondary full-width">
+        ⬅ Sair / Ver Site
+      </button>
     </div>
+  </aside>
 
-    <div class="chart-container">
-      <h3>Ranking de Dúvidas Frequentes</h3>
-      <ul class="ranking-list">
-        <li *ngFor="let item of topInterests; let i = index">
-          <span class="rank">#{{ i + 1 }}</span>
-          <span class="label">{{ item.name }}</span>
-          <div class="bar-container">
-            <div class="bar" [style.width.%]="(item.value / totalInteractions) * 100"></div>
+  <!-- OVERLAY MOBILE (Fundo escuro ao abrir menu) -->
+  <div class="overlay" *ngIf="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-content">
+    
+    <!-- HEADER MOBILE (Só aparece no celular) -->
+    <header class="mobile-header">
+      <div class="brand-mobile">Love<span>Care</span></div>
+      <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
+    </header>
+
+    <!-- VISÃO 1: DASHBOARD -->
+    <div *ngIf="activeTab === 'dashboard'" class="view-container fade-in">
+      <div class="page-header">
+        <h1>Visão Geral</h1>
+        <p>Acompanhe o impacto e as métricas do chatbot.</p>
+      </div>
+
+      <!-- Cards de KPI -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value">{{ totalInteractions }}</div>
+          <div class="kpi-label">Interações Totais</div>
+          <div class="kpi-bar green"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">{{ totalVisits }}</div>
+          <div class="kpi-label">Visitas Únicas</div>
+          <div class="kpi-bar purple"></div>
+        </div>
+        <div class="kpi-card highlight">
+          <div class="kpi-value">{{ conversionRate }}</div>
+          <div class="kpi-label">Taxa de Doação</div>
+          <div class="kpi-bar pink"></div>
+        </div>
+      </div>
+
+      <!-- Lista de Ranking -->
+      <div class="chart-section">
+        <h3>🔥 Assuntos Mais Buscados</h3>
+        <div class="ranking-list">
+          <div *ngFor="let item of topInterests; let i = index" class="ranking-item">
+            <div class="rank-info">
+              <span class="rank-pos">#{{ i + 1 }}</span>
+              <span class="rank-name">{{ item.name }}</span>
+              <span class="rank-val">{{ item.value }} cliques</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="(item.value / totalInteractions) * 100"></div>
+            </div>
           </div>
-          <span class="value">{{ item.value }} cliques</span>
-        </li>
-      </ul>
-      <p class="insight-text" *ngIf="topInterests.length === 0">
-        Nenhum dado coletado ainda. Use o chatbot para gerar métricas.
-      </p>
+          
+          <div *ngIf="topInterests.length === 0" class="empty-state">
+            <p>Nenhum dado coletado ainda.</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div *ngIf="activeTab === 'editor'" class="editor-area">
-    <div *ngIf="activeTab === 'editor'" class="editor-area">
-
-      <div class="toolbar">
-        <button class="btn-add" (click)="addCard()">+ Novo Passo</button>
-        <button class="btn-save" (click)="save()" [disabled]="isLoading">
+    <!-- VISÃO 2: EDITOR DE FLUXO -->
+    <div *ngIf="activeTab === 'editor'" class="view-container fade-in">
+      <div class="page-header flex-between">
+        <div>
+          <h1>Editor de Fluxo</h1>
+          <p>Gerencie as perguntas e respostas do robô.</p>
+        </div>
+        
+        <button class="btn-primary" (click)="save()" [disabled]="isLoading">
           {{ isLoading ? 'Salvando...' : '💾 Salvar Alterações' }}
         </button>
       </div>
 
-      <div class="cards-grid">
-        <div *ngFor="let card of cards; let i = index" class="edit-card">
+      <div class="cards-wrapper">
+        
+        <!-- Placeholder para Adicionar Novo -->
+        <div class="add-card-placeholder" (click)="addCard()">
+          <div class="plus-circle">+</div>
+          <p>Criar Novo Passo</p>
+        </div>
 
-          <div class="card-header">
-            <span class="card-id">ID: <strong>{{ card.id }}</strong></span>
-            <button class="btn-remove-sm" (click)="removeCard(i)" *ngIf="card.id !== 'start'">🗑️</button>
+        <!-- Loop dos Cards Existentes -->
+        <div *ngFor="let card of cards; let i = index" class="flow-card">
+          <div class="card-header-strip">
+            <span class="badge-id">{{ card.id }}</span>
+            <button class="btn-icon-trash" (click)="removeCard(i)" *ngIf="card.id !== 'start'" title="Apagar Card">
+              🗑️
+            </button>
           </div>
-
+          
           <div class="card-body">
-            <label>Mensagem do Robô:</label>
-            <textarea [(ngModel)]="card.text" rows="3"></textarea>
-
-            <label>Botões de Resposta:</label>
-            <div class="options-list">
-              <div *ngFor="let opt of card.options; let j = index" class="option-row">
-                <input type="text" [(ngModel)]="opt.label" placeholder="Texto do Botão" class="input-sm">
-
-                <input type="text" [(ngModel)]="opt.nextStep" placeholder="Destino (ID ou Link http...)"
-                  class="input-sm">
-
-                <button (click)="removeOption(card, j)" class="btn-x">×</button>
+            <div class="form-group">
+              <label>Mensagem do Robô</label>
+              <textarea [(ngModel)]="card.text" rows="3" class="form-control" placeholder="Digite a mensagem..."></textarea>
+            </div>
+            
+            <div class="options-group">
+              <label>Botões de Resposta</label>
+              
+              <div class="options-list">
+                <div *ngFor="let opt of card.options; let j = index" class="opt-row">
+                  <input type="text" [(ngModel)]="opt.label" class="form-control small" placeholder="Texto do Botão">
+                  <input type="text" [(ngModel)]="opt.nextStep" class="form-control small" placeholder="Destino (ID ou Link)">
+                  <button (click)="removeOption(card, j)" class="btn-icon-remove" title="Remover botão">×</button>
+                </div>
               </div>
-              <button (click)="addOption(card)" class="btn-add-opt">+ Botão</button>
+              
+              <button class="btn-secondary small-btn full-width" (click)="addOption(card)">
+                + Adicionar Botão
+              </button>
             </div>
           </div>
-
         </div>
+
       </div>
     </div>
-  </div>
 
+  </main>
 </div>

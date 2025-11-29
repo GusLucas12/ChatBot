@@ -1,26 +1,45 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// Ajuste este caminho conforme a estrutura da sua pasta
-import { ChatFlow, ChatMessage, ChatOption } from '../../modules/chat.models';
+
 import { ChatService } from '../../services/chat';
 import { MetricsService } from '../../services/metrics';
+import { ChatFlow, ChatMessage, ChatOption } from '../../modules/chat.models';
+import { debounceTime, distinctUntilChanged, filter, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chatbot',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './chatbot.html',
-  styleUrl: './chatbot.scss',
+  templateUrl: './chatbot.html', // Certifique-se que o nome do arquivo está certo
+  styleUrl: './chatbot.scss',    // Certifique-se que o nome do arquivo está certo
 })
-export class ChatbotComponent implements OnInit, AfterViewChecked {
+export class ChatbotComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChild('scrollMe') private myScrollContainer!: ElementRef;
 
   isOpen = true;
-  userInput = '';
-  messages: ChatMessage[] = [];
+  
+  // Controle do Input com Debounce (Resposta Automática)
+  private _userInput = '';
+  private inputSubject = new Subject<string>();
+  private inputSubscription!: Subscription;
 
-  // Começa vazio, será preenchido pela Planilha Google
+  // Getter e Setter: Intercepta cada letra digitada
+  get userInput(): string { return this._userInput; }
+  set userInput(val: string) {
+    this._userInput = val;
+    
+    // VERIFICAÇÃO DE ENVIO IMEDIATO (Sem esperar debounce)
+    // Se o usuário digitou algo que corresponde EXATAMENTE a uma opção, envia na hora
+    if (this.isExactMatch(val)) {
+      this.sendMessage();
+    } else {
+      // Caso contrário, espera o usuário parar de digitar
+      this.inputSubject.next(val); 
+    }
+  }
+
+  messages: ChatMessage[] = [];
   flow: ChatFlow = {}; 
 
   constructor(
@@ -29,99 +48,147 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
   ) { }
 
   ngOnInit() {
-    // 1. Registra a visita na planilha
     this.metricsService.logEvent('visit', 'Site Acessado');
 
-    // 2. Busca os dados da Planilha (ASSÍNCRONO)
+    // Carrega os dados da planilha
     this.chatService.getFlow().subscribe({
       next: (data) => {
-        // Quando os dados chegarem da planilha, salvamos aqui
         this.flow = data;
-        // E só AGORA iniciamos a conversa
-        this.addBotMessage('start');
+        if (this.flow && this.flow['start']) {
+          this.addBotMessage('start');
+        }
       },
-      error: (err) => {
-        console.error('Erro ao carregar fluxo da planilha', err);
-        // Opcional: Adicionar uma mensagem de erro visual para o usuário
-        this.messages.push({ 
-          text: 'Erro ao conectar com o servidor. Tente recarregar.', 
-          sender: 'bot' 
-        });
-      }
+      error: (err) => console.error('Erro ao carregar fluxo:', err)
+    });
+
+    // --- CONFIGURAÇÃO DA RESPOSTA AUTOMÁTICA AO DIGITAR ---
+    this.inputSubscription = this.inputSubject.pipe(
+      debounceTime(600), // Reduzido de 1200ms para 600ms (Mais rápido)
+      distinctUntilChanged(), 
+      filter(text => text.trim().length > 0) 
+    ).subscribe(() => {
+      this.sendMessage();
     });
   }
 
-  // Adiciona mensagem do bot baseada no passo (step)
+  ngOnDestroy() {
+    if (this.inputSubscription) {
+      this.inputSubscription.unsubscribe();
+    }
+  }
+
+  // Verifica se o texto digitado é igual ao rótulo de algum botão (Case insensitive)
+  isExactMatch(text: string): boolean {
+    if (!this.flow || text.trim().length < 2) return false;
+    const lowerText = text.toLowerCase().trim();
+    
+    const allSteps = Object.values(this.flow);
+    for (const step of allSteps) {
+      if (step.options) {
+        // Se achar um botão com nome IDÊNTICO, retorna true para envio imediato
+        const match = step.options.find(opt => opt.label.toLowerCase() === lowerText);
+        if (match) return true;
+      }
+    }
+    return false;
+  }
+
+  // Adiciona mensagem do bot na tela
   addBotMessage(stepKey: string) {
-    // Garante que o flow existe antes de tentar acessar
     if (!this.flow) return;
 
-    const step = this.flow[stepKey] || this.flow['default'];
+    const step = this.flow[stepKey] || this.flow['default'] || this.flow['start'];
+    
+    if (!step) return;
 
-    // Se caiu no default (não achou o passo), volta opções do início
-    // Verificamos se 'start' existe para evitar erro se a planilha estiver vazia
-    const startOptions = this.flow['start'] ? this.flow['start'].options : [];
-    const options = step === this.flow['default'] ? startOptions : step.options;
+    const options = step.options || [];
 
     this.messages.push({
-      text: step?.text || 'Olá! (Carregando...)', // Fallback caso texto esteja vazio
+      text: step.text,
       sender: 'bot',
       options: options
     });
   }
 
-  // Trata o clique nas opções
+  // --- 1. CLIQUE NO BOTÃO (Resposta Imediata) ---
   handleOption(option: ChatOption) {
-    // --- NOVO: Registra o clique na aba 'metricas' da planilha ---
     this.metricsService.logEvent('option_click', option.label);
-
-    // 1. Adiciona a escolha do usuário como mensagem visual
+    
+    // Mostra o que foi clicado
     this.messages.push({ text: option.label, sender: 'user' });
 
-    // 2. Verifica se é uma ação externa (Link ou WhatsApp)
+    // Ações externas (Links)
     if (option.action === 'url' && option.payload) {
       window.open(option.payload, '_blank');
-      // Pequeno delay para o usuário ver o que aconteceu antes do bot falar de novo
-      setTimeout(() => this.addBotMessage('start'), 1000); 
+      setTimeout(() => this.addBotMessage('start'), 500); 
       return;
     }
-
     if (option.action === 'whatsapp' && option.payload) {
       window.open(`https://wa.me/${option.payload}`, '_blank');
       return;
     }
 
-    // 3. Navegação normal do fluxo
+    // Navegação interna - Reduzido para 300ms para ser mais "direto"
     setTimeout(() => {
       if (option.nextStep) {
         this.addBotMessage(option.nextStep);
       }
-    }, 500);
+    }, 300);
   }
 
-  // Trata o input de texto livre
+  // --- 2. DIGITOU ALGO (Busca Automática) ---
   sendMessage() {
-    if (!this.userInput.trim()) return;
+    if (!this._userInput.trim()) return;
 
-    const text = this.userInput;
+    const text = this._userInput.trim();
     this.messages.push({ text, sender: 'user' });
-    this.userInput = '';
+    this._userInput = ''; // Limpa o campo
 
-    // Lógica simples de palavra-chave
+    // Simula processamento - Reduzido para 300ms
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      // Verifica se o fluxo já carregou antes de tentar navegar
-      if (lowerText.includes('pix') || lowerText.includes('doar')) {
-        this.addBotMessage('doacao');
-      } else if (lowerText.includes('voluntari')) {
-        this.addBotMessage('voluntario');
+      let foundStepId: string | null = null;
+
+      // ESTRATÉGIA DE BUSCA INTELIGENTE:
+      if (this.flow[lowerText]) {
+        foundStepId = lowerText;
+      } 
+      else {
+        const allSteps = Object.values(this.flow);
+        
+        for (const step of allSteps) {
+          if (!step.options) continue;
+
+          // Procura parcial (ex: "roupa" acha "Doar Roupas")
+          const match = step.options.find(opt => 
+            opt.label.toLowerCase().includes(lowerText)
+          );
+
+          if (match) {
+            if (match.nextStep) {
+              foundStepId = match.nextStep;
+            } else if (match.action === 'whatsapp' || match.action === 'url') {
+               this.messages.push({ 
+                 text: `Acessando: ${match.label}...`, 
+                 sender: 'bot' 
+               });
+               window.open(match.payload, '_blank');
+               return;
+            }
+            break;
+          }
+        }
+      }
+
+      if (foundStepId) {
+        this.addBotMessage(foundStepId);
       } else {
         this.addBotMessage('default');
       }
-    }, 500);
+
+    }, 300);
   }
 
-  // Mantém o scroll sempre no final
   ngAfterViewChecked() {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;

@@ -1,37 +1,65 @@
-<div class="chat-container">
+<div class="chat-layout">
+  
+  <!-- CABEÇALHO -->
+  <header class="chat-header">
+    <div class="header-content">
+      <div class="avatar-circle">
+        <span class="icon">❤️</span>
+      </div>
+      <div class="header-text">
+        <h2>Love to Care</h2>
+        <p>Atendente Virtual</p>
+      </div>
+    </div>
+  </header>
 
-    <div class="chat-header">
-        <div class="header-icon">
-            ONG
-        </div>
-        <div class="header-info">
-            <h3>Atendimento LoveToCare</h3>
+  <!-- CORPO DO CHAT (Mensagens) -->
+  <div class="chat-body" #scrollMe>
     
-        </div>
+    <!-- Mensagem de Boas-vindas (Data/Hora) -->
+    <div class="chat-timestamp">Hoje</div>
+
+    <!-- Loop de Mensagens -->
+    <div *ngFor="let msg of messages" 
+         class="message-row" 
+         [ngClass]="{'user-row': msg.sender === 'user', 'bot-row': msg.sender === 'bot'}">
+      
+      <!-- Avatar do Bot (só aparece na linha do bot) -->
+      <div class="mini-avatar" *ngIf="msg.sender === 'bot'">LC</div>
+
+      <!-- Balão da Mensagem -->
+      <div class="message-bubble fade-up">
+        {{ msg.text }}
+      </div>
     </div>
 
-    <div class="chat-body" #scrollMe>
-        <div *ngFor="let msg of messages" class="message-wrapper"
-            [ngClass]="{'my-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
-
-            <div class="message-bubble">
-                {{ msg.text }}
-            </div>
-
-            <div class="options-container"
-                *ngIf="msg.sender === 'bot' && msg.options && msg === messages[messages.length - 1]">
-                <button *ngFor="let opt of msg.options" class="option-btn" (click)="handleOption(opt)">
-                    {{ opt.label }}
-                </button>
-            </div>
-
-        </div>
+    <!-- ÁREA DE OPÇÕES (Botões) -->
+    <!-- Só mostra se a última mensagem for do bot e tiver opções -->
+    <div *ngIf="messages.length > 0 && messages[messages.length - 1].sender === 'bot' && messages[messages.length - 1].options" 
+         class="options-container fade-up-delay">
+      
+      <button *ngFor="let opt of messages[messages.length - 1].options" 
+              class="btn-option" 
+              (click)="handleOption(opt)">
+        {{ opt.label }}
+      </button>
     </div>
 
-    <div class="chat-footer">
-        <input type="text" [(ngModel)]="userInput" (keydown.enter)="sendMessage()"
-            placeholder="Digite uma mensagem..." />
-        <button (click)="sendMessage()">➤</button>
+  </div>
+
+  <!-- RODAPÉ (Input) -->
+  <footer class="chat-footer">
+    <div class="input-group">
+      <input type="text" 
+             [(ngModel)]="userInput" 
+             (keydown.enter)="sendMessage()"
+             placeholder="Digite sua dúvida..." 
+             class="chat-input">
+      
+      <button class="btn-send" (click)="sendMessage()" [disabled]="!userInput.trim()">
+        ➤
+      </button>
     </div>
+  </footer>
 
 </div>
