@@ -13,8 +13,7 @@ import { debounceTime, distinctUntilChanged, filter, Subject, Subscription } fro
   imports: [CommonModule, FormsModule],
   templateUrl: './chatbot.html', // Certifique-se que o nome do arquivo está certo
   styleUrl: './chatbot.scss',    // Certifique-se que o nome do arquivo está certo
-})
-export class ChatbotComponent implements OnInit, AfterViewChecked, OnDestroy {
+})export class ChatbotComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChild('scrollMe') private myScrollContainer!: ElementRef;
 
   isOpen = true;
@@ -120,6 +119,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked, OnDestroy {
     // Ações externas (Links)
     if (option.action === 'url' && option.payload) {
       window.open(option.payload, '_blank');
+      // Pequeno delay visual apenas para resetar caso volte
       setTimeout(() => this.addBotMessage('start'), 500); 
       return;
     }
@@ -128,12 +128,11 @@ export class ChatbotComponent implements OnInit, AfterViewChecked, OnDestroy {
       return;
     }
 
-    // Navegação interna - Reduzido para 300ms para ser mais "direto"
-    setTimeout(() => {
-      if (option.nextStep) {
-        this.addBotMessage(option.nextStep);
-      }
-    }, 300);
+    // Navegação interna - SEM TIMEOUT (Resposta Instantânea)
+    // Isso garante que o Angular detecte a mudança na hora, sem precisar de Enter
+    if (option.nextStep) {
+      this.addBotMessage(option.nextStep);
+    }
   }
 
   // --- 2. DIGITOU ALGO (Busca Automática) ---
