@@ -120,6 +120,22 @@ textarea, input {
 /* Responsividade Mobile */
 .mobile-header { display: none; }
 @media (max-width: 768px) {
+    .sidebar {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%); /* Esconde completamente */
+    z-index: 1100; /* Acima do overlay */
+    box-shadow: none; /* Remove sombra quando fechada */
+    
+    &.open {
+      transform: translateX(0); /* Mostra ao abrir */
+      box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+    }
+  }
   .sidebar { position: fixed; left: -260px; z-index: 100; transition: 0.3s; 
     &.open { left: 0; box-shadow: 5px 0 15px rgba(0,0,0,0.1); } 
   }

@@ -1,6 +1,5 @@
 <div class="admin-layout">
   
-  <!-- SIDEBAR (Menu Lateral) -->
   <aside class="sidebar" [class.open]="isMobileMenuOpen">
     <div class="brand">
       <h2>Love<span>Care</span></h2>
@@ -8,93 +7,55 @@
     </div>
     
     <nav class="nav-menu">
-      <button (click)="activeTab = 'dashboard'; isMobileMenuOpen=false" 
-              class="nav-btn" 
-              [class.active]="activeTab === 'dashboard'">
+      <button (click)="activeTab = 'dashboard'; isMobileMenuOpen=false" class="nav-btn" [class.active]="activeTab === 'dashboard'">
         <span class="icon">📊</span> Dashboard
       </button>
-      <button (click)="activeTab = 'editor'; isMobileMenuOpen=false" 
-              class="nav-btn" 
-              [class.active]="activeTab === 'editor'">
+      <button (click)="activeTab = 'editor'; isMobileMenuOpen=false" class="nav-btn" [class.active]="activeTab === 'editor'">
         <span class="icon">✏️</span> Editar Fluxo
       </button>
     </nav>
 
     <div class="sidebar-footer">
-      <button (click)="goHome()" class="btn-secondary full-width">
-        ⬅ Sair / Ver Site
-      </button>
+      <button (click)="goHome()" class="btn-secondary full-width">⬅ Sair / Ver Site</button>
     </div>
   </aside>
 
-  <!-- OVERLAY MOBILE (Fundo escuro ao abrir menu) -->
   <div class="overlay" *ngIf="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
 
-  <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-content">
-    
-    <!-- HEADER MOBILE (Só aparece no celular) -->
     <header class="mobile-header">
       <div class="brand-mobile">Love<span>Care</span></div>
       <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
     </header>
 
-    <!-- VISÃO 1: DASHBOARD -->
+    <!-- DASHBOARD -->
     <div *ngIf="activeTab === 'dashboard'" class="view-container fade-in">
-      <div class="page-header">
-        <h1>Visão Geral</h1>
-        <p>Acompanhe o impacto e as métricas do chatbot.</p>
-      </div>
-
-      <!-- Cards de KPI -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-value">{{ totalInteractions }}</div>
-          <div class="kpi-label">Interações Totais</div>
-          <div class="kpi-bar green"></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value">{{ totalVisits }}</div>
-          <div class="kpi-label">Visitas Únicas</div>
-          <div class="kpi-bar purple"></div>
-        </div>
-        <div class="kpi-card highlight">
-          <div class="kpi-value">{{ conversionRate }}</div>
-          <div class="kpi-label">Taxa de Doação</div>
-          <div class="kpi-bar pink"></div>
-        </div>
-      </div>
-
-      <!-- Lista de Ranking -->
-      <div class="chart-section">
-        <h3>🔥 Assuntos Mais Buscados</h3>
-        <div class="ranking-list">
-          <div *ngFor="let item of topInterests; let i = index" class="ranking-item">
-            <div class="rank-info">
-              <span class="rank-pos">#{{ i + 1 }}</span>
-              <span class="rank-name">{{ item.name }}</span>
-              <span class="rank-val">{{ item.value }} cliques</span>
+       <div class="page-header"><h1>Visão Geral</h1><p>Métricas.</p></div>
+       <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-value">{{ totalInteractions }}</div><div class="kpi-label">Interações</div><div class="kpi-bar green"></div></div>
+          <div class="kpi-card"><div class="kpi-value">{{ totalVisits }}</div><div class="kpi-label">Visitas</div><div class="kpi-bar purple"></div></div>
+          <div class="kpi-card highlight"><div class="kpi-value">{{ conversionRate }}</div><div class="kpi-label">Conversão</div><div class="kpi-bar pink"></div></div>
+       </div>
+       <div class="chart-section">
+         <h3>🔥 Assuntos Mais Buscados</h3>
+         <div class="ranking-list">
+            <div *ngFor="let item of topInterests" class="ranking-item">
+               <div class="rank-info"><span class="rank-name">{{item.name}}</span><span class="rank-val">{{item.value}}</span></div>
+               <div class="progress-track"><div class="progress-fill" [style.width.%]="(item.value/totalInteractions)*100"></div></div>
             </div>
-            <div class="progress-track">
-              <div class="progress-fill" [style.width.%]="(item.value / totalInteractions) * 100"></div>
-            </div>
-          </div>
-          
-          <div *ngIf="topInterests.length === 0" class="empty-state">
-            <p>Nenhum dado coletado ainda.</p>
-          </div>
-        </div>
-      </div>
+            <div *ngIf="topInterests.length===0" class="empty-state"><p>Sem dados ainda.</p></div>
+         </div>
+       </div>
     </div>
 
-    <!-- VISÃO 2: EDITOR DE FLUXO -->
+    <!-- EDITOR -->
+    <!-- EDITOR DE FLUXO -->
     <div *ngIf="activeTab === 'editor'" class="view-container fade-in">
       <div class="page-header flex-between">
         <div>
           <h1>Editor de Fluxo</h1>
           <p>Gerencie as perguntas e respostas do robô.</p>
         </div>
-        
         <button class="btn-primary" (click)="save()" [disabled]="isLoading">
           {{ isLoading ? 'Salvando...' : '💾 Salvar Alterações' }}
         </button>
@@ -102,41 +63,29 @@
 
       <div class="cards-wrapper">
         
-        <!-- Placeholder para Adicionar Novo -->
-        <div class="add-card-placeholder" (click)="addCard()">
+        <!-- O CLIQUE AQUI SÓ SETA A VARIÁVEL PARA TRUE -->
+        <div class="add-card-placeholder" (click)="isModalOpen = true">
           <div class="plus-circle">+</div>
           <p>Criar Novo Passo</p>
         </div>
 
-        <!-- Loop dos Cards Existentes -->
         <div *ngFor="let card of cards; let i = index" class="flow-card">
-          <div class="card-header-strip">
+           <!-- ... (Conteúdo do card igual) ... -->
+           <div class="card-header-strip">
             <span class="badge-id">{{ card.id }}</span>
-            <button class="btn-icon-trash" (click)="removeCard(i)" *ngIf="card.id !== 'start'" title="Apagar Card">
-              🗑️
-            </button>
+            <button class="btn-icon-trash" (click)="removeCard(i)" *ngIf="card.id !== 'start'">🗑️</button>
           </div>
-          
           <div class="card-body">
-            <div class="form-group">
-              <label>Mensagem do Robô</label>
-              <textarea [(ngModel)]="card.text" rows="3" class="form-control" placeholder="Digite a mensagem..."></textarea>
-            </div>
-            
+            <div class="form-group"><label>Mensagem</label><textarea [(ngModel)]="card.text" rows="3" class="form-control"></textarea></div>
             <div class="options-group">
-              <label>Botões de Resposta</label>
-              
               <div class="options-list">
                 <div *ngFor="let opt of card.options; let j = index" class="opt-row">
-                  <input type="text" [(ngModel)]="opt.label" class="form-control small" placeholder="Texto do Botão">
-                  <input type="text" [(ngModel)]="opt.nextStep" class="form-control small" placeholder="Destino (ID ou Link)">
-                  <button (click)="removeOption(card, j)" class="btn-icon-remove" title="Remover botão">×</button>
+                  <input [(ngModel)]="opt.label" class="form-control small" placeholder="Texto">
+                  <input [(ngModel)]="opt.nextStep" class="form-control small" placeholder="Destino">
+                  <button (click)="removeOption(card, j)" class="btn-icon-remove">×</button>
                 </div>
               </div>
-              
-              <button class="btn-secondary small-btn full-width" (click)="addOption(card)">
-                + Adicionar Botão
-              </button>
+              <button class="btn-secondary small-btn full-width" (click)="addOption(card)">+ Botão</button>
             </div>
           </div>
         </div>
@@ -145,4 +94,18 @@
     </div>
 
   </main>
+
+  <!-- --- AQUI ESTÁ O NOVO COMPONENTE DE MODAL --- -->
+  <!-- Só aparece se isModalOpen for true -->
+  <app-add-card 
+    *ngIf="isModalOpen"
+    [existingIds]="getCardIds()"
+    (confirmAdd)="handleNewCard($event)"
+    (close)="isModalOpen = false">
+  </app-add-card>
+
 </div>
+
+
+
+ 
