@@ -179,13 +179,31 @@ import { debounceTime, distinctUntilChanged, filter, Subject, Subscription } fro
         }
       }
 
-      if (foundStepId) {
+     if (foundStepId) {
         this.addBotMessage(foundStepId);
       } else {
-        this.addBotMessage('default');
+        // --- AQUI ENTRA O GEMINI ---
+        console.log('🤖 Não achei localmente. Chamando Gemini...');
+        
+        this.chatService.getAiFallback(text).subscribe({
+          next: (res) => {
+            console.log('✨ Gemini sugeriu:', res.stepId);
+            
+            // Verifica se a sugestão existe no fluxo
+            if (res.stepId && this.flow[res.stepId]) {
+              this.addBotMessage(res.stepId);
+            } else {
+              this.addBotMessage('default'); // Se a IA alucinar um ID que não existe
+            }
+          },
+          error: () => {
+            this.addBotMessage('default'); // Se a internet falhar
+          }
+        });
       }
-
     }, 300);
+
+ 
   }
 
   ngAfterViewChecked() {

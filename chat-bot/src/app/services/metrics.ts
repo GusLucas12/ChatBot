@@ -15,7 +15,7 @@ export interface MetricEvent {
 export class MetricsService {
   private storageKey = 'ong_metrics';
   private metrics: MetricEvent[] = [];
-  private apiUrl = 'https://script.google.com/macros/s/AKfycbzD5ft5Fd3gtyL7PcD9lOW0kpmubLdS9TqEv1N1maIjcna7_NHnVxJD_qiO2FPoMI3U/exec';
+  private apiUrl = 'https://script.google.com/macros/s/AKfycbxI5EuolnELcYAXhOSNOqDS_DYzQiHDZTjVlyJc0rXro4DuC0S4xSSoSMauqSb6O9cP/exec';
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient) {
     if (isPlatformBrowser(this.platformId)) {
       const saved = localStorage.getItem(this.storageKey);

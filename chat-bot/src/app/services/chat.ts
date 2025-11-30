@@ -9,7 +9,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ChatService {
   private storageKey = 'ong_chat_flow';
-  private apiUrl = 'https://script.google.com/macros/s/AKfycbzD5ft5Fd3gtyL7PcD9lOW0kpmubLdS9TqEv1N1maIjcna7_NHnVxJD_qiO2FPoMI3U/exec';
+  private apiUrl = 'https://script.google.com/macros/s/AKfycbxI5EuolnELcYAXhOSNOqDS_DYzQiHDZTjVlyJc0rXro4DuC0S4xSSoSMauqSb6O9cP/exec';
 
   // O fluxo padrão inicial
   private defaultFlow: ChatFlow = {
@@ -58,7 +58,7 @@ export class ChatService {
   };
 
   // Injetamos o ID da plataforma para saber se estamos no Servidor ou Navegador
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private http: HttpClient) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient) { }
 
   // Pega o fluxo
   getFlow(): Observable<ChatFlow> {
@@ -66,17 +66,22 @@ export class ChatService {
     return this.http.get<ChatFlow>(`${this.apiUrl}?action=getFlow`);
   }
 
- saveFlow(newFlow: ChatFlow): Observable<any> {
-  // O TRUQUE: 'text/plain' evita que o navegador faça a pergunta de segurança que o Google bloqueia
-  const headers = new HttpHeaders({ 'Content-Type': 'text/plain' });
-  
-  // Enviamos o objeto transformado em string manualmente
-  return this.http.post(
-    `${this.apiUrl}?action=saveFlow`, 
-    JSON.stringify(newFlow), 
-    { headers }
-  );
-}
+  saveFlow(newFlow: ChatFlow): Observable<any> {
+    // O TRUQUE: 'text/plain' evita que o navegador faça a pergunta de segurança que o Google bloqueia
+    const headers = new HttpHeaders({ 'Content-Type': 'text/plain' });
+
+    // Enviamos o objeto transformado em string manualmente
+    return this.http.post(
+      `${this.apiUrl}?action=saveFlow`,
+      JSON.stringify(newFlow),
+      { headers }
+    );
+  }
+   getAiFallback(userText: string): Observable<{ stepId: string }> {
+    // Codifica o texto para URL (ex: espaço vira %20)
+    const safeText = encodeURIComponent(userText);
+    return this.http.get<{ stepId: string }>(`${this.apiUrl}?action=aiFallback&text=${safeText}`);
+  }
   // Reseta para o padrão
   resetFactory() {
     if (isPlatformBrowser(this.platformId)) {
