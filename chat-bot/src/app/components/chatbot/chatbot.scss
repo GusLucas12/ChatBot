@@ -1,16 +1,16 @@
-/* --- VARIÁVEIS LOCAIS (Baseado na Identidade da ONG) --- */
+
 :host {
-  --primary: #DA577C;       /* Rosa Queimado */
+  --primary: #DA577C;       
   --primary-dark: #c04566;
-  --secondary: #E6DCDC;     /* Bege */
-  --bg-chat: #F2EDE4;       /* Creme */
+  --secondary: #E6DCDC;     
+  --bg-chat: #F2EDE4;       
   --white: #ffffff;
   --text-dark: #4a4a4a;
   --text-grey: #888;
   --shadow-soft: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* Layout Full Screen */
+
 .chat-layout {
   display: flex;
   flex-direction: column;
@@ -21,7 +21,6 @@
   overflow: hidden;
 }
 
-/* --- 1. CABEÇALHO --- */
 .chat-header {
   background-color: var(--white);
   padding: 15px 20px;
@@ -47,7 +46,6 @@
   .header-text p { margin: 0; font-size: 13px; color: var(--text-grey); font-weight: 600; }
 }
 
-/* --- 2. CORPO (Scroll) --- */
 .chat-body {
   flex: 1;
   overflow-y: auto;
@@ -57,7 +55,6 @@
   gap: 15px;
   max-width: 800px; margin: 0 auto; width: 100%;
   
-  /* Esconde scrollbar feia mas mantém funcionalidade */
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 }
@@ -67,13 +64,12 @@
   margin: 10px 0; text-transform: uppercase; letter-spacing: 1px;
 }
 
-/* --- 3. MENSAGENS --- */
 .message-row {
   display: flex; gap: 10px; margin-bottom: 5px;
   max-width: 85%;
 }
 
-/* Estilo BOT */
+
 .bot-row {
   align-self: flex-start;
   
@@ -86,18 +82,18 @@
   .message-bubble {
     background: var(--white);
     color: var(--text-dark);
-    border-top-left-radius: 4px; /* Ponta quadrada */
+    border-top-left-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.03);
   }
 }
 
-/* Estilo USUÁRIO */
+
 .user-row {
   align-self: flex-end;
-  flex-direction: row-reverse; /* Inverte ordem se quiser avatar, mas aqui não tem */
+  flex-direction: row-reverse; 
   
   .message-bubble {
-    background: var(--primary); /* Rosa */
+    background: var(--primary); 
     color: white;
     border-top-right-radius: 4px;
     box-shadow: 0 4px 10px rgba(218, 87, 124, 0.2);
@@ -112,10 +108,10 @@
   position: relative;
 }
 
-/* --- 4. OPÇÕES (Botões) --- */
+
 .options-container {
   display: flex; flex-wrap: wrap; gap: 10px;
-  margin-left: 42px; /* Alinha com o texto do bot (pula o avatar) */
+  margin-left: 42px; 
   margin-bottom: 10px;
 }
 
@@ -124,7 +120,7 @@
   border: 1px solid var(--primary);
   color: var(--primary);
   padding: 10px 20px;
-  border-radius: 20px; /* Pílula */
+  border-radius: 20px; 
   font-weight: 700; font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -138,7 +134,6 @@
   }
 }
 
-/* --- 5. RODAPÉ (Input) --- */
 .chat-footer {
   background: var(--white);
   padding: 20px;
@@ -177,7 +172,6 @@
   }
 }
 
-/* --- ANIMAÇÕES --- */
 .fade-up { animation: fadeUp 0.3s ease-out forwards; }
 .fade-up-delay { animation: fadeUp 0.4s ease-out forwards; opacity: 0; animation-delay: 0.2s; }
 

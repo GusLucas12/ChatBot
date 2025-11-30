@@ -28,7 +28,7 @@
       <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
     </header>
 
-    <!-- DASHBOARD -->
+ 
     <div *ngIf="activeTab === 'dashboard'" class="view-container fade-in">
        <div class="page-header"><h1>Visão Geral</h1><p>Métricas.</p></div>
        <div class="kpi-grid">
@@ -48,8 +48,7 @@
        </div>
     </div>
 
-    <!-- EDITOR -->
-    <!-- EDITOR DE FLUXO -->
+ 
     <div *ngIf="activeTab === 'editor'" class="view-container fade-in">
       <div class="page-header flex-between">
         <div>
@@ -63,14 +62,14 @@
 
       <div class="cards-wrapper">
         
-        <!-- O CLIQUE AQUI SÓ SETA A VARIÁVEL PARA TRUE -->
+      
         <div class="add-card-placeholder" (click)="isModalOpen = true">
           <div class="plus-circle">+</div>
           <p>Criar Novo Passo</p>
         </div>
 
         <div *ngFor="let card of cards; let i = index" class="flow-card">
-           <!-- ... (Conteúdo do card igual) ... -->
+
            <div class="card-header-strip">
             <span class="badge-id">{{ card.id }}</span>
             <button class="btn-icon-trash" (click)="removeCard(i)" *ngIf="card.id !== 'start'">🗑️</button>
@@ -95,8 +94,7 @@
 
   </main>
 
-  <!-- --- AQUI ESTÁ O NOVO COMPONENTE DE MODAL --- -->
-  <!-- Só aparece se isModalOpen for true -->
+  
   <app-add-card 
     *ngIf="isModalOpen"
     [existingIds]="getCardIds()"

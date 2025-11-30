@@ -27,13 +27,13 @@ export class AdminComponent implements OnInit {
   activeTab: 'dashboard' | 'editor' = 'dashboard';
   isMobileMenuOpen = false;
 
-  // Controle de abertura do modal
+
   isModalOpen = false;
 
   cards: EditableCard[] = [];
   isLoading = false;
 
-  // Variáveis do Dashboard
+
   topInterests: { name: string, value: number }[] = [];
   totalInteractions = 0;
   totalVisits = 0;
@@ -50,7 +50,7 @@ export class AdminComponent implements OnInit {
     this.loadMetrics();
   }
 
-  // ... (loadFlow, loadMetrics, toggleMobileMenu iguais ao anterior) ...
+
   loadFlow() {
     this.isLoading = true;
     this.chatService.getFlow().subscribe({
@@ -84,26 +84,21 @@ export class AdminComponent implements OnInit {
   }
   toggleMobileMenu() { this.isMobileMenuOpen = !this.isMobileMenuOpen; }
 
-  // --- MÉTODOS PARA O MODAL ---
-
-  // Método auxiliar para passar a lista de IDs para o filho
   getCardIds(): string[] {
     return this.cards.map(c => c.id);
   }
 
-  // Recebe o ID novo do componente filho e cria o card
   handleNewCard(newId: string) {
     this.cards.push({ id: newId, text: 'Nova mensagem...', options: [] });
-    this.isModalOpen = false; // Fecha o modal
+    this.isModalOpen = false; 
 
-    // Scroll para o fim
+
     setTimeout(() => {
       const wrapper = document.querySelector('.cards-wrapper');
       if (wrapper) wrapper.scrollTop = wrapper.scrollHeight;
     }, 100);
   }
 
-  // ... (Resto das funções removeCard, save, etc iguais) ...
   removeCard(index: number) {
     if (confirm('Apagar este card?')) this.cards.splice(index, 1);
   }
@@ -139,7 +134,7 @@ export class AdminComponent implements OnInit {
           text: 'As alterações foram salvas !.',
           icon: 'success',
           confirmButtonText: 'Ótimo',
-          confirmButtonColor: '#DA577C' // Cor da ONG
+          confirmButtonColor: '#DA577C' 
         });
       },
       error: () => {
@@ -148,7 +143,7 @@ export class AdminComponent implements OnInit {
           text: 'Ocorreu um erro ao salvar as atualizações.',
           icon: 'warning',
           confirmButtonText: 'Ótimo',
-          confirmButtonColor: '#DA577C' // Cor da ONG
+          confirmButtonColor: '#DA577C' 
         }); this.isLoading = false;
       }
     });

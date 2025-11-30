@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="modal-backdrop" (click)="cancel()">
-      <!-- (click.stop) impede que clicar no modal feche ele -->
+
       <div class="modal-content fade-in-scale" (click)="$event.stopPropagation()">
         
         <div class="modal-header">
@@ -41,7 +41,7 @@ import { FormsModule } from '@angular/forms';
     </div>
   `,
   styles: [`
-    /* ESTILOS ISOLADOS DO MODAL */
+  
     .modal-backdrop {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
@@ -91,13 +91,13 @@ import { FormsModule } from '@angular/forms';
   `]
 })
 export class AddCardComponent {
-  // Recebe a lista de IDs existentes para validar
+
   @Input() existingIds: string[] = [];
   
-  // Emite o novo ID quando der certo
+
   @Output() confirmAdd = new EventEmitter<string>();
   
-  // Emite evento para fechar
+
   @Output() close = new EventEmitter<void>();
 
   newIdInput = '';
@@ -111,15 +111,15 @@ export class AddCardComponent {
 
     const cleanId = this.newIdInput.toLowerCase().trim().replace(/\s+/g, '_');
 
-    // Validação usando a lista recebida do pai
+ 
     if (this.existingIds.includes(cleanId)) {
       this.errorMsg = `O ID "${cleanId}" já existe!`;
       return;
     }
 
-    // Tudo certo: envia para o pai
+
     this.confirmAdd.emit(cleanId);
-    this.newIdInput = ''; // Limpa
+    this.newIdInput = ''; 
   }
 
   cancel() {

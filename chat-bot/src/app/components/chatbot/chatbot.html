@@ -1,6 +1,6 @@
 <div class="chat-layout">
   
-  <!-- CABEÇALHO -->
+
   <header class="chat-header">
     <div class="header-content">
       <div class="avatar-circle">
@@ -13,28 +13,23 @@
     </div>
   </header>
 
-  <!-- CORPO DO CHAT (Mensagens) -->
   <div class="chat-body" #scrollMe>
     
-    <!-- Mensagem de Boas-vindas (Data/Hora) -->
+  
     <div class="chat-timestamp">Hoje</div>
 
-    <!-- Loop de Mensagens -->
     <div *ngFor="let msg of messages" 
          class="message-row" 
          [ngClass]="{'user-row': msg.sender === 'user', 'bot-row': msg.sender === 'bot'}">
       
-      <!-- Avatar do Bot (só aparece na linha do bot) -->
       <div class="mini-avatar" *ngIf="msg.sender === 'bot'">LC</div>
 
-      <!-- Balão da Mensagem -->
       <div class="message-bubble fade-up">
         {{ msg.text }}
       </div>
     </div>
 
-    <!-- ÁREA DE OPÇÕES (Botões) -->
-    <!-- Só mostra se a última mensagem for do bot e tiver opções -->
+ 
     <div *ngIf="messages.length > 0 && messages[messages.length - 1].sender === 'bot' && messages[messages.length - 1].options" 
          class="options-container fade-up-delay">
       
@@ -47,7 +42,6 @@
 
   </div>
 
-  <!-- RODAPÉ (Input) -->
   <footer class="chat-footer">
     <div class="input-group">
       <input type="text" 

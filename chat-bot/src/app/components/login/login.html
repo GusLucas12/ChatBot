@@ -1,0 +1,31 @@
+<div class="login-container">
+  <div class="login-card fade-in">
+    <div class="brand">
+      <h2>Love<span>Care</span></h2>
+      <p>Acesso Restrito</p>
+    </div>
+
+    <div class="form-area">
+      <label>Senha de Acesso</label>
+      <input type="password" 
+             [(ngModel)]="password" 
+             (keydown.enter)="doLogin()"
+             placeholder="Digite a senha..."
+             class="form-control">
+      
+      <div *ngIf="errorMsg" class="error-badge">
+        ⚠️ {{ errorMsg }}
+      </div>
+
+      <button (click)="doLogin()" 
+              [disabled]="isLoading || !password" 
+              class="btn-login">
+        {{ isLoading ? 'Verificando...' : 'Entrar' }}
+      </button>
+    </div>
+    
+    <div class="footer">
+      <a routerLink="/">Voltar ao Site</a>
+    </div>
+  </div>
+</div>
