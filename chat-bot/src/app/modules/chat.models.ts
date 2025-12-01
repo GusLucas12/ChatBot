@@ -6,9 +6,10 @@ export interface ChatOption {
 }
 
 export interface ChatMessage {
-  text: string;
+  text?: string;
   sender: 'bot' | 'user';
   options?: ChatOption[]; // Apenas mensagens do bot têm opções
+  typing?:boolean;
 }
 
 export interface ChatFlow {

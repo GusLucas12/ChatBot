@@ -1,41 +1,53 @@
 <div class="chat-layout">
-  
+
 
   <header class="chat-header">
     <div class="header-content">
-      <div class="avatar-circle">
-        <span class="icon">❤️</span>
+
+      <!-- Lado Esquerdo (Logo e Texto) -->
+      <div class="header-left">
+        <div class="avatar-circle">
+          <!-- Se tiver imagem, use a tag img aqui -->
+          <span class="icon">❤️</span>
+        </div>
+        <div class="header-text">
+          <h2>Love to Care</h2>
+          <p>Atendente Virtual</p>
+        </div>
       </div>
-      <div class="header-text">
-        <h2>Love to Care</h2>
-        <p>Atendente Virtual</p>
-      </div>
+
+      <!-- Lado Direito (Botão Admin) -->
+      <button class="btn-admin" (click)="goToLogin()" title="Acesso Restrito">
+        <i class="bi bi-gear"></i>
+      </button>
+
     </div>
   </header>
 
   <div class="chat-body" #scrollMe>
-    
-  
+
+
     <div class="chat-timestamp">Hoje</div>
 
-    <div *ngFor="let msg of messages" 
-         class="message-row" 
-         [ngClass]="{'user-row': msg.sender === 'user', 'bot-row': msg.sender === 'bot'}">
-      
+    <div *ngFor="let msg of messages" class="message-row"
+      [ngClass]="{'user-row': msg.sender === 'user', 'bot-row': msg.sender === 'bot'}">
+
       <div class="mini-avatar" *ngIf="msg.sender === 'bot'">LC</div>
+      <span *ngIf="msg.typing" class="typing-animation">
+        <span></span><span></span><span></span>
+      </span>
 
       <div class="message-bubble fade-up">
         {{ msg.text }}
       </div>
     </div>
 
- 
-    <div *ngIf="messages.length > 0 && messages[messages.length - 1].sender === 'bot' && messages[messages.length - 1].options" 
-         class="options-container fade-up-delay">
-      
-      <button *ngFor="let opt of messages[messages.length - 1].options" 
-              class="btn-option" 
-              (click)="handleOption(opt)">
+
+    <div
+      *ngIf="messages.length > 0 && messages[messages.length - 1].sender === 'bot' && messages[messages.length - 1].options"
+      class="options-container fade-up-delay">
+
+      <button *ngFor="let opt of messages[messages.length - 1].options" class="btn-option" (click)="handleOption(opt)">
         {{ opt.label }}
       </button>
     </div>
@@ -44,12 +56,9 @@
 
   <footer class="chat-footer">
     <div class="input-group">
-      <input type="text" 
-             [(ngModel)]="userInput" 
-             (keydown.enter)="sendMessage()"
-             placeholder="Digite sua dúvida..." 
-             class="chat-input">
-      
+      <input type="text" [(ngModel)]="userInput" (keydown.enter)="sendMessage()" placeholder="Digite sua dúvida..."
+        class="chat-input">
+
       <button class="btn-send" (click)="sendMessage()" [disabled]="!userInput.trim()">
         ➤
       </button>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ChatbotComponent } from './components/chatbot/chatbot';
 
-// IMPORTANTE: Verifique se o caminho abaixo está correto.
+
 
 
 @Component({
@@ -14,5 +14,5 @@ import { ChatbotComponent } from './components/chatbot/chatbot';
   styleUrl: './app.scss' 
 })
 export class App {
-  title = 'seu-projeto';
+  title = 'chat-bot';
 }

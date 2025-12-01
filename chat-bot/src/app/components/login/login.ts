@@ -31,11 +31,14 @@ password = '';
       this.isLoading = false;
       if (success) {
         // Redireciona APENAS se o login retornar true
-        console.log('🚀 [LoginComponent] Redirecionando para Admin...');
+      
         this.router.navigate(['/admin']);
       } else {
         this.errorMsg = 'Senha incorreta.';
       }
     });
+  }
+  goBack(){
+     this.router.navigate(['/']);
   }
 }

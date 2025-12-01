@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 export interface MetricEvent {
   type: 'visit' | 'option_click';
-  label: string; // Ex: 'Quero Doar', 'Voluntário'
+  label: string;
   timestamp: Date;
 }
 
@@ -15,7 +15,7 @@ export interface MetricEvent {
 export class MetricsService {
   private storageKey = 'ong_metrics';
   private metrics: MetricEvent[] = [];
-  private apiUrl = 'https://script.google.com/macros/s/AKfycbxI5EuolnELcYAXhOSNOqDS_DYzQiHDZTjVlyJc0rXro4DuC0S4xSSoSMauqSb6O9cP/exec';
+  private apiUrl = 'https://script.google.com/macros/s/AKfycbzPFxF5AWL7hhaMx9_6SuVTqVs0UvyiomGbM9HwSPAcLJJSW02XN3TJ1eLZtagMUPwn/exec';
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient) {
     if (isPlatformBrowser(this.platformId)) {
       const saved = localStorage.getItem(this.storageKey);
@@ -23,18 +23,14 @@ export class MetricsService {
     }
   }
 
-  // ENVIA O DADO PARA A PLANILHA
   logEvent(type: 'visit' | 'option_click', label: string) {
-    // TRUQUE ANTI-CORS: 
-    // O Google Apps Script exige 'text/plain' para não bloquear requisições de outros domínios.
     const headers = new HttpHeaders({ 'Content-Type': 'text/plain' });
 
     const payload = { type, label };
 
-    // Dispara o POST
     this.http.post(
       `${this.apiUrl}?action=logMetric`,
-      JSON.stringify(payload), // Envia como string JSON
+      JSON.stringify(payload),
       { headers }
     ).subscribe({
       next: () => console.log('Métrica enviada:', label),
@@ -44,7 +40,6 @@ export class MetricsService {
   getAllMetrics(): Observable<MetricEvent[]> {
     return this.http.get<MetricEvent[]>(`${this.apiUrl}?action=getMetrics`);
   }
-  // Retorna contagem de cliques por opção (Para o Gráfico)
   getTopInterests() {
     const counts: { [key: string]: number } = {};
 
@@ -54,7 +49,6 @@ export class MetricsService {
         counts[m.label] = (counts[m.label] || 0) + 1;
       });
 
-    // Transforma em array ordenado
     return Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
