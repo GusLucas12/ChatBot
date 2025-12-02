@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "dist/chat-bot/server/server.mjs", "use": "@vercel/node" },
+    { "src": "dist/chat-bot/browser/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/.*", "dest": "dist/chat-bot/server/server.mjs" }
+  ]
+}
