@@ -12,6 +12,22 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "dest": "dist/chat-bot/browser/assets/$1"
+    },
+    {
+      "src": "/(.*).css",
+      "dest": "dist/chat-bot/browser/$1.css"
+    },
+    {
+      "src": "/(.*).js",
+      "dest": "dist/chat-bot/browser/$1.js"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "dist/chat-bot/browser/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "dist/chat-bot/server/server.mjs"
     }
